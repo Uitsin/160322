@@ -14,17 +14,17 @@ neigh_modify once yes one 5000
 #=============================================
 
 lattice 	sc  1
-region		box block 0 8 0 50 0 4
+region		box block 0 16 0 100 0 8
 create_box	4 box bond/types 3 extra/bond/per/atom 18 
 
 create_hf_atoms	1 box #units box
 print		"create_hf_atoms is done"
 neighbor 	4.0 bin
 print		"neighbor is okay"
-mass		1 1000.0 # kg
-mass		2 1000.0 # kg
-mass		3 1000.0 # kg
-mass		4 1000.0 # kg
+mass		1 125.0 # kg
+mass		2 125.0 # kg
+mass		3 125.0 # kg
+mass		4 125.0 # kg
 
 #=============================================
 #	 LJ potentials (needed, but not relevant to our model)
@@ -38,9 +38,9 @@ special_bonds 	lj/coul 0 1.0 1.0 extra 10
 #=============================================
 
 bond_style	hf_harmonic
-bond_coeff	1 1.0 50000000000.0  50000000.0 # bondtype r0 k1 beta
-bond_coeff	2 1.0 50000000000.0  50000000.0 # bondtype r0 k1 beta #broken bond, k1=0, beta=0
-bond_coeff	3 1.0 50000000000.0  50000000.0 # bondtype r0 k1 beta #wet channel, k1=0, beta=0
+bond_coeff	1 0.5 25000000000.0  12500000.0 # bondtype r0 k1 beta
+bond_coeff	2 0.5 25000000000.0  12500000.0 # bondtype r0 k1 beta #broken bond, k1=0, beta=0
+bond_coeff	3 0.5 25000000000.0  12500000.0 # bondtype r0 k1 beta #wet channel, k1=0, beta=0
 
 
 #include 	InputScripts/variables_regions.in
@@ -61,7 +61,7 @@ bond_channel_channel # channel-channel bond list
 print		"bond_list okay"
 run 		1
 
-timestep	5e-06
+timestep	2.5e-06
 
 
 
@@ -96,7 +96,7 @@ run		1
 #=============================================
 
 #delta_cutoff_randomness2	1.00006 0 0 0 0 # factor_x, factor_y, factor_z
-delta_cutoff_randomness3	1.00006 0 1.00006 0 1.00006 0
+delta_cutoff_randomness3	1.0000424 0 1.0000424 0 1.0000424 0
 run		1
 
 
@@ -133,13 +133,13 @@ dump		DumpID  all chlocal 100 Output/channel_info_4_25_2.5.dump c_ComputeID[1] c
 #	injeciton operation
 #=============================================
 
-fix		InjectionUpdateID all injection/update 4 25 2.5 50
+fix		InjectionUpdateID all injection/update 8 50 4.5 50
 
 #=============================================
 #	lubrication evolution
 #=============================================
 
-fix		LubricationUpdateID all lubrication/update_BC 2 6 2 48 2.3 2.7 0.1
+fix		LubricationUpdateID all lubrication/update_BC 4 12 4 96 4 5 0.1 0.5
 #run		1
 dump_modify	2 pad 10 every 100
 run		1999999
