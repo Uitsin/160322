@@ -103,7 +103,7 @@ run		1
 #=============================================
 #	initialize channel elements
 #=============================================
-include 	InputScripts/seedcracks_insertion.in
+include 	InputScripts/seedcracks_sf_0.5.in
 
 run		1
 
