@@ -21,10 +21,10 @@ create_hf_atoms	1 box #units box
 print		"create_hf_atoms is done"
 neighbor 	4.0 bin
 print		"neighbor is okay"
-mass		1 125.0 # kg
-mass		2 125.0 # kg
-mass		3 125.0 # kg
-mass		4 125.0 # kg
+mass		1 1000.0 # kg
+mass		2 1000.0 # kg
+mass		3 1000.0 # kg
+mass		4 1000.0 # kg
 
 #=============================================
 #	 LJ potentials (needed, but not relevant to our model)
@@ -38,9 +38,9 @@ special_bonds 	lj/coul 0 1.0 1.0 extra 10
 #=============================================
 
 bond_style	hf_harmonic
-bond_coeff	1 0.5 50000000000.0  50000000.0 # bondtype r0 k1 beta
-bond_coeff	2 0.5 50000000000.0  50000000.0 # bondtype r0 k1 beta #broken bond, k1=0, beta=0
-bond_coeff	3 0.5 50000000000.0  50000000.0 # bondtype r0 k1 beta #wet channel, k1=0, beta=0
+bond_coeff	1 1.0 50000000000.0  50000000.0 # bondtype r0 k1 beta
+bond_coeff	2 1.0 50000000000.0  50000000.0 # bondtype r0 k1 beta #broken bond, k1=0, beta=0
+bond_coeff	3 1.0 50000000000.0  50000000.0 # bondtype r0 k1 beta #wet channel, k1=0, beta=0
 
 
 #include 	InputScripts/variables_regions.in
