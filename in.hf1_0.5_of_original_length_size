@@ -13,11 +13,11 @@ neigh_modify once yes one 5000
 #	 create atoms
 #=============================================
 
-lattice 	sc  1
-region		box block 0 16 0 100 0 8
+lattice 	sc  0.5
+region		box block 0 8 0 50 0 4
 create_box	4 box bond/types 3 extra/bond/per/atom 18 
 
-create_hf_atoms	1 box #units box
+create_hf_atoms	0.5 box #units box
 print		"create_hf_atoms is done"
 neighbor 	4.0 bin
 print		"neighbor is okay"
@@ -133,13 +133,13 @@ dump		DumpID  all chlocal 100 Output/channel_info_4_25_2.5.dump c_ComputeID[1] c
 #	injeciton operation
 #=============================================
 
-fix		InjectionUpdateID all injection/update 8 50 4.5 50
+fix		InjectionUpdateID all injection/update 4 25 2.5 50
 
 #=============================================
 #	lubrication evolution
 #=============================================
 
-fix		LubricationUpdateID all lubrication/update_BC 4 12 4 96 4 5 0.1 0.5
+fix		LubricationUpdateID all lubrication/update_BC 2 6 2 48 2.3 2.7 0.1 0.5
 #run		1
 dump_modify	2 pad 10 every 100
 run		1999999
