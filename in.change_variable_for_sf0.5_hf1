@@ -21,10 +21,10 @@ create_hf_atoms	1 box #units box
 print		"create_hf_atoms is done"
 neighbor 	4.0 bin
 print		"neighbor is okay"
-mass		1 125.0 # kg
-mass		2 125.0 # kg
-mass		3 125.0 # kg
-mass		4 125.0 # kg
+mass		1 62.5 # kg
+mass		2 62.5 # kg
+mass		3 62.5 # kg
+mass		4 62.5 # kg
 
 #=============================================
 #	 LJ potentials (needed, but not relevant to our model)
@@ -38,9 +38,9 @@ special_bonds 	lj/coul 0 1.0 1.0 extra 10
 #=============================================
 
 bond_style	hf_harmonic
-bond_coeff	1 0.5 25000000000.0  25000000.0 # bondtype r0 k1 beta
-bond_coeff	2 0.5 25000000000.0  25000000.0 # bondtype r0 k1 beta #broken bond, k1=0, beta=0
-bond_coeff	3 0.5 25000000000.0  25000000.0 # bondtype r0 k1 beta #wet channel, k1=0, beta=0
+bond_coeff	1 0.5 12500000000.0  6250000.0 # bondtype r0 k1 beta
+bond_coeff	2 0.5 12500000000.0  6250000.0 # bondtype r0 k1 beta #broken bond, k1=0, beta=0
+bond_coeff	3 0.5 12500000000.0  6250000.0 # bondtype r0 k1 beta #wet channel, k1=0, beta=0
 
 
 #include 	InputScripts/variables_regions.in
@@ -96,7 +96,7 @@ run		1
 #=============================================
 
 #delta_cutoff_randomness2	1.00006 0 0 0 0 # factor_x, factor_y, factor_z
-delta_cutoff_randomness3	1.0000424 0 1.0000424 0 1.0000424 0
+delta_cutoff_randomness3	1.0000848 0 1.0000848 0 1.0000848 0
 run		1
 
 
@@ -126,7 +126,7 @@ fix		1 all nve
 
 
 compute		ComputeID all channel/pressure time atomx atomy atomz pressure width # pressure in MPa and width in microns
-dump		DumpID  all chlocal 100 Output/channel_info_8_50_4.5_chvr.dump c_ComputeID[1] c_ComputeID[2] c_ComputeID[3] c_ComputeID[4] c_ComputeID[5] c_ComputeID[6]
+dump		DumpID  all chlocal 100 Output/channel_info_8_50_4.5_chvr_compensation.dump c_ComputeID[1] c_ComputeID[2] c_ComputeID[3] c_ComputeID[4] c_ComputeID[5] c_ComputeID[6]
 
 
 #=============================================
