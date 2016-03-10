@@ -1,0 +1,145 @@
+# Input script for 3d HF 
+
+units		lj
+dimension	3
+newton 	off
+boundary	s s s
+atom_style	chbond
+
+comm_modify 	cutoff 10.0 vel yes 
+neigh_modify once yes one 5000
+
+#=============================================
+#	 create atoms
+#=============================================
+
+lattice 	sc  1
+region		box block 0 8 0 50 0 4
+create_box	4 box bond/types 3 extra/bond/per/atom 18 
+
+create_hf_atoms	1 box #units box
+print		"create_hf_atoms is done"
+neighbor 	4.0 bin
+print		"neighbor is okay"
+mass		1 1000.0 # kg
+mass		2 1000.0 # kg
+mass		3 1000.0 # kg
+mass		4 1000.0 # kg
+
+#=============================================
+#	 LJ potentials (needed, but not relevant to our model)
+#=============================================
+pair_style	lj/cut 2.5
+pair_coeff	* * 0 1.0 2.5 # itype jtype epsilon sigma cutoff 0.8909
+special_bonds 	lj/coul 0 1.0 1.0 extra 10
+
+#=============================================
+#	 bond Info
+#=============================================
+
+bond_style	hf_harmonic
+bond_coeff	1 1.0 50000000000.0  50000000.0 # bondtype r0 k1 beta
+bond_coeff	2 1.0 50000000000.0  50000000.0 # bondtype r0 k1 beta #broken bond, k1=0, beta=0
+bond_coeff	3 1.0 50000000000.0  50000000.0 # bondtype r0 k1 beta #wet channel, k1=0, beta=0
+
+
+#include 	InputScripts/variables_regions.in
+
+run		1 # needed to build ghost list and nghost.
+
+
+#=============================================
+#	 create bond lists for rock-rock, rock-channel, 
+#	 channel-rock and chanel-channel atoms
+#=============================================
+
+bond_rock_rock # rock-rock bond list
+bond_rock_channel # rock-channel bond list
+bond_channel_rock # channel-rock bond list
+bond_channel_channel # channel-channel bond list
+
+print		"bond_list okay"
+run 		1
+
+timestep	5e-06
+
+
+
+#=============================================
+#	 dump images
+#=============================================
+
+dump		1 all hfimage 100 Output/images/image.*.jpg type type &
+		zoom 3.0 adiam 0.3 atom no bond none none center d 0.5 0.5 0.5&
+		box yes 0.03  size 1024 512 view 60 -30 bond_factor 0 mag_factor 1000 shiny 0.0 hf_flag yes axes yes 0.2 0.05 
+
+dump_modify	1 pad 10
+
+dump		2 all hfimage2 100 Output/images2/image.*.jpg type type &
+		zoom 3.0 adiam 0.2 atom yes bond type 0.1 center d 0.5 0.5 0.5&
+		box yes 0.01  size 1024 512 view 60 -30 bond_factor 1.0 mag_factor 1 shiny 0.0 hf_flag yes axes yes 0.2 0.05  width_cutoff 0.00001
+
+dump_modify	2 pad 10 every 5     
+
+
+
+#=============================================
+#	 apply confining pressure 
+#=============================================
+
+deformation	1.0 1.0 1.0 #0.99996 1.0
+run		1
+
+
+#=============================================
+#	 rock randomness 
+#=============================================
+
+#delta_cutoff_randomness2	1.00006 0 0 0 0 # factor_x, factor_y, factor_z
+delta_cutoff_randomness3	1.00006 0 1.00006 0 1.00006 0
+run		1
+
+
+#=============================================
+#	initialize channel elements
+#=============================================
+include 	InputScripts/seedcracks_insertion.in
+
+run		1
+
+fix		1 all nve
+
+#=============================================
+#	fixed boundary condition	
+#=============================================
+#fix		freeze boundary_fixed setforce 0 0 0 
+#fix 		absorption_bc boundary_damp viscous 10.0
+##fix 		BC_else_ID BC_else setforce 0 0 0
+##fix		BC_lid_ID BC_lid_rock aveforce 0 0 -5000000  #-500000
+##fix             2d_fix all enforce2d
+#run		1000		 
+
+
+#=============================================
+#	compute and dump pressure and width data
+#=============================================
+
+
+compute		ComputeID all channel/pressure time atomx atomy atomz pressure width # pressure in MPa and width in microns
+dump		DumpID  all chlocal 100 Output/channel_info_4_25_2.5.dump c_ComputeID[1] c_ComputeID[2] c_ComputeID[3] c_ComputeID[4] c_ComputeID[5] c_ComputeID[6]
+
+
+#=============================================
+#	injeciton operation
+#=============================================
+
+fix		InjectionUpdateID all injection/update 4 25 2.5 50
+
+#=============================================
+#	lubrication evolution
+#=============================================
+
+fix		LubricationUpdateID all lubrication/update_BC 2 6 2 48 2.3 2.7 0.1
+#run		1
+dump_modify	2 pad 10 every 100
+run		1999999
